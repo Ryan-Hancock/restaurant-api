@@ -1,10 +1,5 @@
 package orders
 
-import "errors"
-
-// ErrNotFound for when an Item can not found.
-var ErrNotFound = errors.New("order not found")
-
 // Order repersents the ordering of multiple Items.
 type Order struct {
 	ID     int     `json:"id"`

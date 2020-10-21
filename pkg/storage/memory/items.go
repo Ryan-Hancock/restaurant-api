@@ -3,11 +3,12 @@ package memory
 import "github.com/ryan-hancock/resturant-api/pkg/items"
 
 func (r *itemRepository) GetItem(ID int) (i items.Item, err error) {
-	if i, ok := r.itemsDB[ID]; !ok {
+	i, ok := r.itemsDB[ID]
+	if !ok {
 		return i, items.ErrNotFound
 	}
 
-	return i, nil
+	return
 }
 
 func (r *itemRepository) GetAllItems() []items.Item {

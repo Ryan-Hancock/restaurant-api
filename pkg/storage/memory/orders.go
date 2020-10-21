@@ -6,11 +6,12 @@ import (
 )
 
 func (r *orderRepository) GetOrder(ID int) (o orders.Order, err error) {
-	if o, ok := r.ordersDB[ID]; !ok {
-		return o, items.ErrNotFound
+	o, ok := r.ordersDB[ID]
+	if !ok {
+		return o, orders.ErrNotFound
 	}
 
-	return o, nil
+	return
 }
 
 func (r *orderRepository) InsertOrder(o orders.Order) (int, error) {
@@ -22,7 +23,13 @@ func (r *orderRepository) InsertOrder(o orders.Order) (int, error) {
 }
 
 func (r *orderRepository) UpdateOrder(o orders.Order) error {
-	panic("not implemented") // TODO: Implement
+	found, err := r.GetOrder(o.ID)
+	if err != nil {
+		return err
+	}
+
+	r.ordersDB[found.ID] = o
+	return nil
 }
 
 func (r *orderRepository) InsertLine(l orders.Line) (int, error) {
@@ -50,4 +57,18 @@ func (r *orderRepository) GetLinesByOrderID(ID int) ([]orders.Line, error) {
 	}
 
 	return lines, nil
+}
+
+func (r *orderRepository) GetLinesPrice(ID int) (price float32, err error) {
+	lines, err := r.GetLinesByOrderID(ID)
+	if err != nil {
+		return
+	}
+
+	var amount float32
+	for _, l := range lines {
+		amount = amount + r.itemsDB[l.ItemID].Price
+	}
+
+	return amount, nil
 }

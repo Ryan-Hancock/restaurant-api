@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"strings"
@@ -86,6 +87,37 @@ func TestPatchOrderWithItem(t *testing.T) {
 		if count != 2 {
 			t.Errorf("get lines for order should of: got %v want %v",
 				count, 2)
+		}
+	})
+}
+
+func TestPostOrderPay(t *testing.T) {
+	oc := newTestOrdersHandler()
+	ic := newTestItemHandler()
+
+	oid, _ := oc.s.NewOrder()
+	iid, _ := ic.s.NewItem(items.Item{Name: "burger", Price: 5.99})
+	oc.s.AppendLine(orders.Line{ItemID: iid, OrderID: oid})
+
+	t.Run("I should see a 400 response if I under pay", func(t *testing.T) {
+		var jsonStr = []byte(`{"amount":4.99}`)
+		req := test.NewRequest(t, "POST", fmt.Sprintf("/order/%d/pay", oid), bytes.NewBuffer(jsonStr))
+		rr := test.ServeRequest("/order/{orderID}/pay", oc.PostOrderPay, req)
+
+		if status := rr.Code; status != http.StatusBadRequest {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusBadRequest)
+		}
+	})
+
+	t.Run("I should see a 204 response with orderID of 1 and itemID of 1", func(t *testing.T) {
+		var jsonStr = []byte(`{"amount":5.99}`)
+		req := test.NewRequest(t, "POST", fmt.Sprintf("/order/%d/pay", oid), bytes.NewBuffer(jsonStr))
+		rr := test.ServeRequest("/order/{orderID}/pay", oc.PostOrderPay, req)
+
+		if status := rr.Code; status != http.StatusNoContent {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusNoContent)
 		}
 	})
 }

@@ -4,12 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/ryan-hancock/resturant-api/pkg/items"
 )
 
 type createBurgerRequest struct {
 	Name  string  `json:"name"`
+	Price float32 `json:"price"`
+}
+
+type changePriceRequest struct {
 	Price float32 `json:"price"`
 }
 
@@ -42,8 +48,7 @@ func (ic itemController) PostItem(w http.ResponseWriter, r *http.Request) {
 	var cr createBurgerRequest
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&cr); err != nil {
-		fmt.Println(err)
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err.Error()))
 		return
 	}
 	defer r.Body.Close()
@@ -57,7 +62,7 @@ func (ic itemController) PostItem(w http.ResponseWriter, r *http.Request) {
 
 	id, err := ic.s.NewItem(items.Item{Name: cr.Name, Price: cr.Price})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("unkwone error %s", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("unkwone error %s", err.Error()))
 	}
 
 	respondWithJSON(w, http.StatusCreated, itemResponse{ItemID: id})
@@ -66,22 +71,30 @@ func (ic itemController) PostItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ic itemController) PatchItem(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
-	// sId := vars["itemID"]
+	vars := mux.Vars(r)
 
-	// id, err := strconv.Atoi(sId)
-	// if err != nil {
-	// 	respondWithError(w, http.StatusBadRequest, validationError{
-	// 		Property: "itemID",
-	// 		Message:  "item ID failed to validate",
-	// 	})
-	// }
+	id, err := strconv.Atoi(vars["itemID"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, validationError{
+			Property: "itemID",
+			Message:  "item ID failed to validate",
+		})
+		return
+	}
 
-	// ic.s.ChangeItemPrice()
+	var cr changePriceRequest
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&cr); err != nil {
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err.Error()))
+		return
+	}
 
-	// if errors.Is(nil, items.ErrNotFound) {
-	// 	respondWithError(w, http.StatusBadRequest, nil)
-	// 	return
-	// }
+	if err = ic.s.ChangeItemPrice(id, cr.Price); err != nil {
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err.Error()))
+		return
+	}
+
+	respondWithJSON(w, http.StatusNoContent, nil)
+
 	return
 }

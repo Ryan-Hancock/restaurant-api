@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -24,10 +25,14 @@ type orderResponse struct {
 	OrderID int `json:"order_id"`
 }
 
+type payRequest struct {
+	Amount float32 `json:"amount"`
+}
+
 func (oc orderController) PostOrder(w http.ResponseWriter, r *http.Request) {
 	id, err := oc.s.NewOrder()
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err.Error()))
 	}
 
 	respondWithJSON(w, http.StatusCreated, orderResponse{OrderID: id})
@@ -69,7 +74,7 @@ func (oc orderController) PatchOrderWithItem(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err.Error()))
 		return
 	}
 
@@ -79,5 +84,38 @@ func (oc orderController) PatchOrderWithItem(w http.ResponseWriter, r *http.Requ
 }
 
 func (oc orderController) PostOrderPay(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	orderID, err := strconv.Atoi(vars["orderID"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, validationError{
+			Property: "orderID",
+			Message:  "order ID failed to validate",
+		})
+	}
+
+	var pr payRequest
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&pr); err != nil {
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err.Error()))
+		return
+	}
+	defer r.Body.Close()
+
+	fmt.Println("here", orderID)
+	err = oc.s.Pay(orderID, pr.Amount)
+	if err == orders.ErrUnderPaid {
+		respondWithError(w, http.StatusBadRequest, validationError{
+			Property: "amount",
+			Message:  fmt.Sprintf("amount paid is to low, %f", pr.Amount),
+		})
+		return
+	}
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err.Error()))
+	}
+
+	respondWithJSON(w, http.StatusNoContent, nil)
+
 	return
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -60,5 +61,26 @@ func TestPostItem(t *testing.T) {
 }
 
 func TestPatchItem(t *testing.T) {
+	ic := newTestItemHandler()
+	iid, _ := ic.s.NewItem(items.Item{Name: "burger", Price: 5.99})
+
+	var jsonStr = []byte(`{"price": 1.99}`)
+	req := test.NewRequest(t, "POST", fmt.Sprintf("/item/%d", iid), bytes.NewBuffer(jsonStr))
+	rr := test.ServeRequest("/item/{itemID}", ic.PatchItem, req)
+
+	t.Run("I should see a 204 response", func(t *testing.T) {
+		if status := rr.Code; status != http.StatusNoContent {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusNoContent)
+		}
+	})
+
+	t.Run("The price should be 1.99", func(t *testing.T) {
+		if item, err := ic.s.GetItem(iid); err != nil || item.Price != 1.99 {
+			t.Errorf("item returned wrong price: got %v want %v",
+				item.Price, 1.99)
+		}
+	})
+
 	return
 }
