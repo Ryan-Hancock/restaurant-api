@@ -5,6 +5,9 @@ import "errors"
 // ErrNotFound for when an Item can not found.
 var ErrNotFound = errors.New("item not found")
 
+// ErrStorage for when an Item fail on operation.
+var ErrStorage = errors.New("item storage failed")
+
 // Repository provides access to the Item storage
 type Repository interface {
 	GetItem(int) (Item, error)

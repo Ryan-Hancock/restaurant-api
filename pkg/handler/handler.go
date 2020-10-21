@@ -30,6 +30,11 @@ type errorResponse struct {
 	Error interface{} `json:"error"`
 }
 
+type validationError struct {
+	Property string `json:"property"`
+	Message  string `json:"message"`
+}
+
 func respondWithError(w http.ResponseWriter, code int, payload interface{}) {
 	respondWithJSON(w, code, errorResponse{Error: payload})
 }
