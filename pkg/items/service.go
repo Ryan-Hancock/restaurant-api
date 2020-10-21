@@ -5,10 +5,10 @@ import "errors"
 // ErrNotFound for when an Item can not found.
 var ErrNotFound = errors.New("item not found")
 
-// ErrStorage for when an Item fail on operation.
+// ErrStorage for when the Item storage fails on operation.
 var ErrStorage = errors.New("item storage failed")
 
-// Repository provides access to the Item storage
+// Repository provides access to the Item storage.
 type Repository interface {
 	GetItem(int) (Item, error)
 	GetAllItems() []Item
@@ -16,7 +16,7 @@ type Repository interface {
 	UpdateItem(Item) error
 }
 
-// Service provides Item opertions.
+// Service provides Item operations.
 type Service interface {
 	NewItem(Item) (int, error)
 	GetItem(ID int) (Item, error)
@@ -28,7 +28,7 @@ type service struct {
 	r Repository
 }
 
-// NewService creates a new Item service
+// NewService creates a new Item service.
 func NewService(r Repository) Service {
 	return &service{r}
 }

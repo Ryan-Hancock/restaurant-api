@@ -7,10 +7,10 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/ryan-hancock/resturant-api/pkg/items"
+	"github.com/ryan-hancock/restaurant-api/pkg/items"
 )
 
-type createBurgerRequest struct {
+type createItemRequest struct {
 	Name  string  `json:"name"`
 	Price float32 `json:"price"`
 }
@@ -27,7 +27,7 @@ type itemsResponse struct {
 	Items []items.Item `json:"items"`
 }
 
-// ItemController implementation of ItemService.
+// ItemController is an implementation of ItemService.
 type itemController struct {
 	s items.Service
 }
@@ -45,7 +45,7 @@ func (ic itemController) GetItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ic itemController) PostItem(w http.ResponseWriter, r *http.Request) {
-	var cr createBurgerRequest
+	var cr createItemRequest
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&cr); err != nil {
 		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid request: %s", err.Error()))
@@ -56,13 +56,13 @@ func (ic itemController) PostItem(w http.ResponseWriter, r *http.Request) {
 	if cr.Name == "" {
 		respondWithError(w, http.StatusBadRequest, validationError{
 			Property: "name",
-			Message:  "name for item can not be empty",
+			Message:  "name for item cannot be empty",
 		})
 	}
 
 	id, err := ic.s.NewItem(items.Item{Name: cr.Name, Price: cr.Price})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("unkwone error %s", err.Error()))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("unknown error %s", err.Error()))
 	}
 
 	respondWithJSON(w, http.StatusCreated, itemResponse{ItemID: id})

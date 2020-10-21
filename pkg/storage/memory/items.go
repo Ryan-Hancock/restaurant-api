@@ -1,6 +1,6 @@
 package memory
 
-import "github.com/ryan-hancock/resturant-api/pkg/items"
+import "github.com/ryan-hancock/restaurant-api/pkg/items"
 
 func (r *itemRepository) GetItem(ID int) (i items.Item, err error) {
 	i, ok := r.itemsDB[ID]

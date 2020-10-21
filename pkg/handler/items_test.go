@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ryan-hancock/resturant-api/pkg/items"
-	"github.com/ryan-hancock/resturant-api/pkg/storage/memory"
-	"github.com/ryan-hancock/resturant-api/pkg/test"
+	"github.com/ryan-hancock/restaurant-api/pkg/items"
+	"github.com/ryan-hancock/restaurant-api/pkg/storage/memory"
+	"github.com/ryan-hancock/restaurant-api/pkg/test"
 )
 
 func newTestItemHandler() *itemController {

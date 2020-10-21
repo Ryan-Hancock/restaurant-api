@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/ryan-hancock/resturant-api/pkg/items"
-	"github.com/ryan-hancock/resturant-api/pkg/orders"
+	"github.com/ryan-hancock/restaurant-api/pkg/items"
+	"github.com/ryan-hancock/restaurant-api/pkg/orders"
 )
 
 type orderController struct {
@@ -102,12 +102,11 @@ func (oc orderController) PostOrderPay(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	fmt.Println("here", orderID)
 	err = oc.s.Pay(orderID, pr.Amount)
 	if err == orders.ErrUnderPaid {
 		respondWithError(w, http.StatusBadRequest, validationError{
 			Property: "amount",
-			Message:  fmt.Sprintf("amount paid is to low, %f", pr.Amount),
+			Message:  fmt.Sprintf("amount paid is too low, %f", pr.Amount),
 		})
 		return
 	}

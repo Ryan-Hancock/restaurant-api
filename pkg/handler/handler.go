@@ -5,11 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/ryan-hancock/resturant-api/pkg/items"
-	"github.com/ryan-hancock/resturant-api/pkg/orders"
+	"github.com/ryan-hancock/restaurant-api/pkg/items"
+	"github.com/ryan-hancock/restaurant-api/pkg/orders"
 )
 
-// Setup will initalise the app handlers for the router.
+// Setup initialises the app handlers for the router.
 func Setup(router *mux.Router, ir items.Repository, or orders.Repository) {
 	is := items.NewService(ir)
 	ic := newItemController(is)

@@ -1,8 +1,8 @@
 package memory
 
 import (
-	"github.com/ryan-hancock/resturant-api/pkg/items"
-	"github.com/ryan-hancock/resturant-api/pkg/orders"
+	"github.com/ryan-hancock/restaurant-api/pkg/items"
+	"github.com/ryan-hancock/restaurant-api/pkg/orders"
 )
 
 var (
@@ -15,7 +15,7 @@ type itemRepository struct {
 	itemsDB map[int]items.Item
 }
 
-// NewItemRepository creates a new items.Repository
+// NewItemRepository creates a new items.Repository.
 func NewItemRepository() items.Repository {
 	return &itemRepository{
 		itemsDB: itemsDB,
@@ -28,7 +28,7 @@ type orderRepository struct {
 	itemsDB  map[int]items.Item
 }
 
-// NewOrderRepository creates a new items.Repository
+// NewOrderRepository creates a new items.Repository.
 func NewOrderRepository() orders.Repository {
 	return &orderRepository{
 		ordersDB: ordersDB,

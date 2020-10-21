@@ -1,8 +1,8 @@
 package memory
 
 import (
-	"github.com/ryan-hancock/resturant-api/pkg/items"
-	"github.com/ryan-hancock/resturant-api/pkg/orders"
+	"github.com/ryan-hancock/restaurant-api/pkg/items"
+	"github.com/ryan-hancock/restaurant-api/pkg/orders"
 )
 
 func (r *orderRepository) GetOrder(ID int) (o orders.Order, err error) {

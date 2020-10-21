@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ryan-hancock/resturant-api/pkg/items"
-	"github.com/ryan-hancock/resturant-api/pkg/orders"
-	"github.com/ryan-hancock/resturant-api/pkg/storage/memory"
-	"github.com/ryan-hancock/resturant-api/pkg/test"
+	"github.com/ryan-hancock/restaurant-api/pkg/items"
+	"github.com/ryan-hancock/restaurant-api/pkg/orders"
+	"github.com/ryan-hancock/restaurant-api/pkg/storage/memory"
+	"github.com/ryan-hancock/restaurant-api/pkg/test"
 )
 
 func newTestOrdersHandler() *orderController {
@@ -57,8 +57,9 @@ func TestPatchOrderWithItem(t *testing.T) {
 		}
 	})
 
-	t.Run("I should see a 404 response with orderID of 1 and itemID of 3 as it does not exisit", func(t *testing.T) {
-		req := test.NewRequest(t, "PATCH", fmt.Sprintf("/order/%d/additem/%d", oid, 3), nil)
+	t.Run("I should see a 404 response with orderID of 1 and a incorrect itemID as it does not exist", func(t *testing.T) {
+		badID := len(ic.s.GetItems()) + 1
+		req := test.NewRequest(t, "PATCH", fmt.Sprintf("/order/%d/additem/%d", oid, badID), nil)
 		rr := test.ServeRequest("/order/{orderID}/additem/{itemID}", oc.PatchOrderWithItem, req)
 
 		if status := rr.Code; status != http.StatusNotFound {

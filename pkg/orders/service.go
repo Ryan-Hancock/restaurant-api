@@ -2,16 +2,15 @@ package orders
 
 import (
 	"errors"
-	"fmt"
 )
 
-// ErrNotFound for when an Order can not found.
+// ErrNotFound for when an Order cannot be found.
 var ErrNotFound = errors.New("order not found")
 
 // ErrUnderPaid for when an amount is lower than the bill.
 var ErrUnderPaid = errors.New("amount was under paid")
 
-// Repository provides access to the Order storage
+// Repository provides access to the Order storage.
 type Repository interface {
 	GetOrder(int) (Order, error)
 	InsertOrder(Order) (int, error)
@@ -21,7 +20,7 @@ type Repository interface {
 	GetLinesPrice(ID int) (float32, error)
 }
 
-// Service provides Order opertions.
+// Service provides Order operations.
 type Service interface {
 	NewOrder() (int, error)
 	AppendLine(line Line) (int, error)
@@ -33,7 +32,7 @@ type service struct {
 	r Repository
 }
 
-// NewService creates a new Item service
+// NewService creates a new Item service.
 func NewService(r Repository) Service {
 	return &service{r}
 }
@@ -51,15 +50,12 @@ func (s *service) Pay(orderID int, paid float32) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("here 2 ", amount)
 
 	if paid < amount {
 		return ErrUnderPaid
 	}
-	fmt.Println("we paid")
 
 	order, err := s.r.GetOrder(orderID)
-	fmt.Println("any order ", order)
 	if err != nil {
 		return err
 	}

@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// NewRequest helps with testing handler requests
+// NewRequest helps with testing handler requests.
 func NewRequest(t *testing.T, method, url string, body io.Reader) *http.Request {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -19,7 +19,7 @@ func NewRequest(t *testing.T, method, url string, body io.Reader) *http.Request 
 	return req
 }
 
-// ServeRequest help with testing serving handler requests
+// ServeRequest helps with testing serving handler requests.
 func ServeRequest(routerURL string, h http.HandlerFunc, req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	router := mux.NewRouter()
