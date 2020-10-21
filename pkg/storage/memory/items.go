@@ -20,9 +20,10 @@ func (r *itemRepository) GetAllItems() []items.Item {
 }
 
 func (r *itemRepository) InsertItem(i items.Item) (int, error) {
-	var newID = r.itemID + 1
+	var newID = len(r.itemsDB) + 1
 	i.ID = newID
-	r.itemsDB[r.itemID+1] = i
+	r.itemsDB[newID] = i
+
 	return newID, nil
 }
 

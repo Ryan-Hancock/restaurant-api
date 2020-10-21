@@ -1,5 +1,10 @@
 package orders
 
+import "errors"
+
+// ErrNotFound for when an Item can not found.
+var ErrNotFound = errors.New("order not found")
+
 // Order repersents the ordering of multiple Items.
 type Order struct {
 	ID     int     `json:"id"`
@@ -9,10 +14,9 @@ type Order struct {
 
 // Line repersents the indiviual purchase entries on an Order.
 type Line struct {
-	ID       int `json:"id"`
-	ItemID   int `json:"item_id"`
-	OrderID  int `json:"order_id"`
-	Quantity int `json:"quantity"`
+	ID      int `json:"id"`
+	ItemID  int `json:"item_id"`
+	OrderID int `json:"order_id"`
 }
 
 // Bill repersents the costing for an Order

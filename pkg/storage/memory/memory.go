@@ -13,7 +13,6 @@ var (
 
 type itemRepository struct {
 	itemsDB map[int]items.Item
-	itemID  int
 }
 
 // NewItemRepository creates a new items.Repository
@@ -27,8 +26,6 @@ type orderRepository struct {
 	ordersDB map[int]orders.Order
 	linesDB  map[int]orders.Line
 	itemsDB  map[int]items.Item
-
-	orderID int
 }
 
 // NewOrderRepository creates a new items.Repository

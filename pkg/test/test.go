@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gorilla/mux"
 )
 
 // NewRequest helps with testing handler requests
@@ -18,11 +20,11 @@ func NewRequest(t *testing.T, method, url string, body io.Reader) *http.Request 
 }
 
 // ServeRequest help with testing serving handler requests
-func ServeRequest(h http.HandlerFunc, req *http.Request) *httptest.ResponseRecorder {
+func ServeRequest(routerURL string, h http.HandlerFunc, req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(h)
-
-	handler.ServeHTTP(rr, req)
+	router := mux.NewRouter()
+	router.HandleFunc(routerURL, h)
+	router.ServeHTTP(rr, req)
 
 	return rr
 }

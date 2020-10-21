@@ -19,7 +19,7 @@ func newTestItemHandler() *itemController {
 func TestGetItems(t *testing.T) {
 	ic := newTestItemHandler()
 	req := test.NewRequest(t, "GET", "/item", nil)
-	rr := test.ServeRequest(ic.GetItems, req)
+	rr := test.ServeRequest("/item", ic.GetItems, req)
 
 	t.Run("I should see a 200 response", func(t *testing.T) {
 		if status := rr.Code; status != http.StatusOK {
@@ -36,7 +36,7 @@ func TestPostItem(t *testing.T) {
 
 	var jsonStr = []byte(`{"name":"burger", "price": 1.99}`)
 	req := test.NewRequest(t, "POST", "/item", bytes.NewBuffer(jsonStr))
-	rr := test.ServeRequest(ic.PostItem, req)
+	rr := test.ServeRequest("/item", ic.PostItem, req)
 
 	t.Run("I should see a 201 response", func(t *testing.T) {
 		if status := rr.Code; status != http.StatusCreated {
@@ -47,7 +47,7 @@ func TestPostItem(t *testing.T) {
 
 	jsonStr = []byte(`{"price": 1.99}`)
 	req = test.NewRequest(t, "POST", "/item", bytes.NewBuffer(jsonStr))
-	rr = test.ServeRequest(ic.PostItem, req)
+	rr = test.ServeRequest("/item", ic.PostItem, req)
 
 	t.Run("If I send a request without a name I should get a 400", func(t *testing.T) {
 		if status := rr.Code; status != http.StatusBadRequest {
